@@ -42,8 +42,3 @@ Checking Service instance from manifest: ./manifest-bad.yml
   -   Missing 'service-not-exist2' under application 'spring-music'
   -   Missing '2service-not-exist1' under application 'spring-music2'
   -   Missing '2service-not-exist2' under application 'spring-music2'
-
-
-
-
-# check_cf_manifest
