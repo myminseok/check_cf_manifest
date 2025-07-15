@@ -15,7 +15,7 @@ applications:
   - my-cups2
   - service-not-exist2
   routes:
-  - route: spring-music-cds.apps.lab.pcfdemo.net
+  - route: apps.sys.dhaka.cf-app.com
     protocol: http1
     options: {}
   processes:
