@@ -10,6 +10,15 @@ import sys, json, csv, time, io
 import subprocess
 import yaml 
 
+def fetch_cf_api():
+    p = subprocess.Popen('cf api', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in p.stdout.readlines():
+        line=line.strip() ## remove starting,ending whitespaces
+        line=line.decode('utf-8') ## convert byte to str
+        if "endpoint:" in line: 
+           return line.split("endpoint:")[1]
+    sys.exit(1)
+
 def print_cf_target():
     p = subprocess.Popen('cf target', shell=True)
     retval = p.wait()
@@ -27,6 +36,7 @@ def fetch_cf_services():
     retval = p.wait()
     if retval:
       sys.exit(1)
+    # print(cf_services)
     return  cf_services
 
 def check_manifest_services(manifest):
@@ -89,7 +99,9 @@ def split_route(manifestRoute):
 ## https://v3-apidocs.cloudfoundry.org/version/3.197.0/index.html#check-reserved-routes-for-a-domain
 def check_route_reserved(host,domain, cf_domains_dict):
     domainGuid=cf_domains_dict.get(domain)
-    url="curl -H \"Authorization: $(cf oauth-token)\" https://api.sys.dhaka.cf-app.com/v3/domains/{0}/route_reservations\?host\={1}".format(domainGuid,host)
+    api=fetch_cf_api()
+    url="curl -H \"Authorization: $(cf oauth-token)\" {0}/v3/domains/{1}/route_reservations\?host\={2}".format(api,domainGuid,host)
+    # print(url)
     p = subprocess.Popen(url, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     cf_domains_dict=dict()
     for line in p.stdout.readlines():
