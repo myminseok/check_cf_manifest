@@ -8,7 +8,7 @@ it exits with 0 if all good. exit 1 otherwise.
 ## prerequisites
 - python3
 - pip3 install pyyaml
-- pip3 install requests
+
 ## How to run
 
 log in to the target foundation.
