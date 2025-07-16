@@ -55,14 +55,9 @@ def check_manifest_services(manifest):
             print ("  - {0}".format(instance))
         return False
                 
-## https://v3-apidocs.cloudfoundry.org/version/3.197.0/index.html#check-reserved-routes-for-a-domain
 ## fetch domain list/guid
-## fetch routes from manifest.yml
-
-
-
 def fetch_cf_domains():
-    print("Fetching cf domains from the target foundation ...")
+    print("  Fetching cf domains from the target foundation ...")
     p = subprocess.Popen('cf curl /v3/domains | jq \'.resources[]| "\(.name) \(.guid)"\'', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     cf_domains_dict=dict()
     for line in p.stdout.readlines():
@@ -76,46 +71,32 @@ def fetch_cf_domains():
     # print(cf_domains_dict)
     return cf_domains_dict
 
-
-## if route domain not match -> wrong.
-def check_route_domain_match(manifestRoute, cf_domains_dict):
+def split_route(manifestRoute):
     manifestRouteSplit=manifestRoute.split('.',1)
-    # print(manifestRouteSplit)
+    host=manifestRouteSplit[0]
     if len(manifestRouteSplit) < 2:
-        return False, "Invalid route domain. too short '{0}'".format(manifestRoute)
-    manifestDomain=manifestRouteSplit[1]
-    if manifestDomain in cf_domains_dict.keys():
-        return True, "Matching route domain in cf domains"
+        domain=None
     else:
-        return False, "No such domain '{0}' in cf domains".format(manifestDomain)
-    
-
+        domain=manifestRouteSplit[1]
+    return host, domain 
 
 ## if route reserved -> wrong.
-def check_cf_domain_reserved(manifestRoute, cf_domains_dict):
-    manifestRouteSplit=manifestRoute.split('.',1)
-    # print(manifestRouteSplit)
-    if len(manifestRouteSplit) < 2:
-        return False, "Invalid route domain '{0}'".format(manifestRoute)
-    domainGuid=cf_domains_dict.get(manifestRouteSplit[1])
-
-    url="curl -H \"Authorization: $(cf oauth-token)\" https://api.sys.dhaka.cf-app.com/v3/domains/{0}/route_reservations\?host\={1}".format(domainGuid,manifestRouteSplit[0])
-    # print (url)
+## https://v3-apidocs.cloudfoundry.org/version/3.197.0/index.html#check-reserved-routes-for-a-domain
+def check_route_reserved(host,domain, cf_domains_dict):
+    domainGuid=cf_domains_dict.get(domain)
+    url="curl -H \"Authorization: $(cf oauth-token)\" https://api.sys.dhaka.cf-app.com/v3/domains/{0}/route_reservations\?host\={1}".format(domainGuid,host)
     p = subprocess.Popen(url, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     cf_domains_dict=dict()
-    ## "matching_route":true
-    response=""
     for line in p.stdout.readlines():
         line=line.strip() ## remove starting,ending whitespaces
         line=line[1:-1] ## remove starting,ending double quote
         line=line.decode('utf-8') ## convert byte to str
-        if "matching_route" in line:
+        if "matching_route" in line: ## "matching_route":true
             # print(line)
             if line.split(":")[1] == "true":
                 return True
             else:
                 return False
-    retval = p.wait()
     
 def check_routes(manifest):
     print("Checking Routes availability from the manifest ({0})".format(manifest))
@@ -136,10 +117,13 @@ def check_routes(manifest):
             manifestRoutes=application["routes"]
             for routeDict in manifestRoutes:
                 manifestRoute=routeDict["route"]
-                match, err= check_route_domain_match(manifestRoute, cf_domains_dict)
-                if not match:
-                     occupied.append("  {0} ('{1}' under application '{2}')".format(err, manifestRoute, appName))
-                if check_cf_domain_reserved(manifestRoute, cf_domains_dict):
+                host,domain=split_route(manifestRoute)
+                if not domain:
+                    occupied.append("  Invalid route. too short '{0}' ('{1}' under application '{2}')".format(host, manifestRoute, appName))
+                    continue
+                if not domain in cf_domains_dict.keys():
+                     occupied.append("  No such domain '{0}' in cf domains ('{1}' under application '{2}')".format(domain, manifestRoute, appName))
+                if check_route_reserved(host, domain, cf_domains_dict):
                      occupied.append("  Route is reserved ('{0}' under application '{1}')".format(manifestRoute, appName))
 
     f.close()

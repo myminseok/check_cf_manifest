@@ -27,13 +27,13 @@ org:            minseok
 space:          test
 
 Checking Routes availability from the manifest (./manifest-good.yml)
-Fetching cf domains from the target foundation ...
+  Fetching cf domains from the target foundation ...
   All routes from the manifest available
 
 Checking Service instance from the manifest (./manifest-good.yml)
   Current service instances in this space '['my-cups', 'my-cups2', 'my-cups 3']'
   All service instance from the manifest exists in current space
-
+  
 $ echo $?
 0
 ```
@@ -49,12 +49,11 @@ org:            minseok
 space:          test
 
 Checking Routes availability from the manifest (./manifest-bad.yml)
-Fetching cf domains from the target foundation ...
+  Fetching cf domains from the target foundation ...
   Found Routes Not Available:
   -   Route is reserved ('cryodocs.apps.dhaka.cf-app.com' under application 'spring-music')
   -   No such domain 'internal' in cf domains ('apps.internal' under application 'spring-music')
-  -   Invalid route domain. too short 'internal' ('internal' under application 'spring-music')
-  -   Route is reserved ('internal' under application 'spring-music')
+  -   Invalid route. too short 'internal' ('internal' under application 'spring-music')
 
 Checking Service instance from the manifest (./manifest-bad.yml)
   Current service instances in this space '['my-cups', 'my-cups2', 'my-cups 3']'
@@ -63,6 +62,7 @@ Checking Service instance from the manifest (./manifest-bad.yml)
   -   Missing 'service-not-exist2' under application 'spring-music'
   -   Missing '2service-not-exist1' under application 'spring-music2'
   -   Missing '2service-not-exist2' under application 'spring-music2'
+
 $ echo $?
 1
 ```
