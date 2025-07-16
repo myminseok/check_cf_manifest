@@ -49,7 +49,7 @@ def check_manifest_services(manifest):
                 if service in cf_services:
                     pass
                 else:
-                    missing.append("  Missing '{0}' under application '{1}'".format(service, appName))
+                    missing.append("  app '{0}' > service '{1}':  Missing on this space ".format(appName, service))
     f.close()
     if not missing:
         print ("  All service instance from the manifest exists in current space")
@@ -123,12 +123,12 @@ def check_routes(manifest):
                 manifestRoute=routeDict["route"]
                 host,domain=split_route(manifestRoute)
                 if not domain:
-                    occupied.append("  Invalid route. too short '{0}' ('{1}' under application '{2}')".format(host, manifestRoute, appName))
+                    occupied.append("  app '{0}' > route '{1}': Invalid route. too short '{2}'".format(appName,manifestRoute,host))
                     continue
                 if not domain in cf_domains_dict.keys():
-                     occupied.append("  No such domain '{0}' in cf domains ('{1}' under application '{2}')".format(domain, manifestRoute, appName))
+                     occupied.append("  app '{0}' > route '{1}':  No such domain '{2}' in cf domains".format(appName, manifestRoute, domain))
                 if check_route_reserved(host, domain, cf_domains_dict):
-                     occupied.append("  Route is reserved ('{0}' under application '{1}')".format(manifestRoute, appName))
+                     occupied.append("  app '{0}' > route '{1}':  Route is reserved".format(appName, manifestRoute))
 
     f.close()
     if not occupied:

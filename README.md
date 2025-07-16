@@ -55,17 +55,17 @@ space:          test
 Checking Routes availability from the manifest (./manifest-bad.yml)
   Fetching cf domains from the target foundation ...
   Found Routes Not Available:
-  -   Route is reserved ('cryodocs.apps.dhaka.cf-app.com' under application 'spring-music')
-  -   No such domain 'internal' in cf domains ('apps.internal' under application 'spring-music')
-  -   Invalid route. too short 'internal' ('internal' under application 'spring-music')
+  -   app 'spring-music' > route 'cryodocs.apps.dhaka.cf-app.com':  Route is reserved
+  -   app 'spring-music' > route 'apps.internal':  No such domain 'internal' in cf domains
+  -   app 'spring-music' > route 'internal': Invalid route. too short 'internal'
 
 Checking Service instance from the manifest (./manifest-bad.yml)
   Current service instances in this space '['my-cups', 'my-cups2', 'my-cups 3']'
   Found Missing service instance:
-  -   Missing 'service-not-exist1' under application 'spring-music'
-  -   Missing 'service-not-exist2' under application 'spring-music'
-  -   Missing '2service-not-exist1' under application 'spring-music2'
-  -   Missing '2service-not-exist2' under application 'spring-music2'
+  -   app 'spring-music' > service 'service-not-exist1':  Missing on this space
+  -   app 'spring-music' > service 'service-not-exist2':  Missing on this space
+  -   app 'spring-music2' > service '2service-not-exist1':  Missing on this space
+  -   app 'spring-music2' > service '2service-not-exist2':  Missing on this space
 
 $ echo $?
 1
