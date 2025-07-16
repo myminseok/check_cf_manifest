@@ -1,3 +1,7 @@
+
+** DISCLAIMER **
+this repo is not officially supported by tanzu.
+
 ## checking cf manifest.yml
 Reads manifest.yml and checking:
 - if service instances exists in the current target space
