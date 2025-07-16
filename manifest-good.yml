@@ -8,7 +8,7 @@ applications:
   services:
   - my-cups2
   routes:
-  - route: spring-music-cds.apps.lab.pcfdemo.net
+  - route: spring-musicx.apps.internal
     protocol: http1
     options: {}
   processes:
@@ -39,4 +39,5 @@ applications:
   services:
   - my-cups 3
   - my-cups
-  
+  routes:
+  - route: spring-music2.apps.internal

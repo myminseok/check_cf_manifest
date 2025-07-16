@@ -25,12 +25,14 @@ API version:    3.194.0
 user:           minseok.kim@broadcom.com
 org:            minseok
 space:          test
-Checking Service instance from the manifest: ./manifest-good.yml
-  Current service instances in this space:['my-cups', 'my-cups2', 'my-cups 3']
-  All service instance from the manifest exists in current space
-Checking Routes from the manifest: ./manifest-good.yml
-  All routes from the manifest MAYBE available
 
+Checking Routes availability from the manifest (./manifest-good.yml)
+Fetching cf domains from the target foundation ...
+  All routes from the manifest available
+
+Checking Service instance from the manifest (./manifest-good.yml)
+  Current service instances in this space '['my-cups', 'my-cups2', 'my-cups 3']'
+  All service instance from the manifest exists in current space
 
 $ echo $?
 0
@@ -45,17 +47,22 @@ API version:    3.194.0
 user:           minseok.kim@broadcom.com
 org:            minseok
 space:          test
-Checking Service instance from the manifest: ./manifest-bad.yml
-  Current service instances in this space:['my-cups', 'my-cups2', 'my-cups 3']
-  Found Missing service instance:
-  -   Missing 'service-not-exist1' under application 'spring-music-cds'
-  -   Missing 'service-not-exist2' under application 'spring-music-cds'
-  -   Missing '2service-not-exist1' under application 'spring-music-cds2'
-  -   Missing '2service-not-exist2' under application 'spring-music-cds2'
-Checking Routes from the manifest: ./manifest-bad.yml
-  Found Routes that might be used already:
-  -  Route 'apps.sys.dhaka.cf-app.com' under application 'spring-music-cds' responding with http-code 200
 
+Checking Routes availability from the manifest (./manifest-bad.yml)
+Fetching cf domains from the target foundation ...
+  Found Routes Not Available:
+  -   Route is reserved ('cryodocs.apps.dhaka.cf-app.com' under application 'spring-music')
+  -   No such domain 'internal' in cf domains ('apps.internal' under application 'spring-music')
+  -   Invalid route domain. too short 'internal' ('internal' under application 'spring-music')
+  -   Route is reserved ('internal' under application 'spring-music')
+
+Checking Service instance from the manifest (./manifest-bad.yml)
+  Current service instances in this space '['my-cups', 'my-cups2', 'my-cups 3']'
+  Found Missing service instance:
+  -   Missing 'service-not-exist1' under application 'spring-music'
+  -   Missing 'service-not-exist2' under application 'spring-music'
+  -   Missing '2service-not-exist1' under application 'spring-music2'
+  -   Missing '2service-not-exist2' under application 'spring-music2'
 $ echo $?
 1
 ```
