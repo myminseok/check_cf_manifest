@@ -1,3 +1,8 @@
+## Reads manifest.yml and checking:
+## - if service instances exists in the current target space
+## - if routes are available by checking [check-reserved-routes-for-a-domain cf api](https://v3-apidocs.cloudfoundry.org/version/3.197.0/index.html#check-reserved-routes-for-a-domain)
+## it exits with 0 if all good. exit 1 otherwise.
+##
 ## pip3 install pyyaml
 ## python3 check-manifest.py ./spring-music-cds_manifest.yml
 
@@ -92,7 +97,6 @@ def check_route_reserved(host,domain, cf_domains_dict):
         line=line[1:-1] ## remove starting,ending double quote
         line=line.decode('utf-8') ## convert byte to str
         if "matching_route" in line: ## "matching_route":true
-            # print(line)
             if line.split(":")[1] == "true":
                 return True
             else:
