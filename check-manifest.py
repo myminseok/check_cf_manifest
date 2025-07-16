@@ -110,9 +110,10 @@ def check_route_reserved(host,domain, cf_domains_dict):
         line=line.decode('utf-8') ## convert byte to str
         if "matching_route" in line: ## "matching_route":true
             if line.split(":")[1] == "true":
-                return True
+                return True, "Route is reserved"
             else:
-                return False
+                return False, "Route is not reserved"
+    return True, "Something wrong in cpi call"
     
 def check_routes(manifest):
     print("Checking Routes availability from the manifest ({0})".format(manifest))
@@ -135,12 +136,13 @@ def check_routes(manifest):
                 manifestRoute=routeDict["route"]
                 host,domain=split_route(manifestRoute)
                 if not domain:
-                    occupied.append("  app '{0}' > route '{1}': Invalid route. too short '{2}'".format(appName,manifestRoute,host))
-                    continue
-                if not domain in cf_domains_dict.keys():
-                     occupied.append("  app '{0}' > route '{1}':  No such domain '{2}' in cf domains".format(appName, manifestRoute, domain))
-                if check_route_reserved(host, domain, cf_domains_dict):
-                     occupied.append("  app '{0}' > route '{1}':  Route is reserved".format(appName, manifestRoute))
+                    occupied.append("  app '{0}' > route '{1}': Invalid route. too short".format(appName,manifestRoute))
+                elif not domain in cf_domains_dict.keys():
+                    occupied.append("  app '{0}' > route '{1}':  No such domain '{2}' in cf domains".format(appName, manifestRoute, domain))
+                else:
+                    reserved, err= check_route_reserved(host, domain, cf_domains_dict)
+                    if reserved:
+                       occupied.append("  app '{0}' > route '{1}':  {2}".format(appName, manifestRoute, err))
 
     f.close()
     if not occupied:
