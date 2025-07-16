@@ -1,7 +1,7 @@
 ## checking cf manifest.yml
 Reads manifest.yml and checking:
 - if service instances exists in the current target space
-- if routes are available by checking http response code 200
+- if routes are available by checking [check-reserved-routes-for-a-domain cf api](https://v3-apidocs.cloudfoundry.org/version/3.197.0/index.html#check-reserved-routes-for-a-domain)
 
 it exits with 0 if all good. exit 1 otherwise.
 
